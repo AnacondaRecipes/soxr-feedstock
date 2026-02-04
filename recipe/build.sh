@@ -1,14 +1,10 @@
  #!/bin/sh
 
-mkdir build
-cd build
-
-cmake ${CMAKE_ARGS}  .. \
+cmake -GNinja -B build ${CMAKE_ARGS} \
       -DCMAKE_BUILD_TYPE=Release \
-      -DBUILD_TESTS=ON
+      -DBUILD_TESTS=ON \
+      ${SRC_DIR}
 
-cmake --build . --config Release
-cmake --build . --config Release --target install
-if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR}" != "" ]]; then
-ctest --output-on-failure -C Release
-fi
+cmake --build build --config Release
+cmake --build build --config Release --target install
+cd build && ctest --output-on-failure -C Release
